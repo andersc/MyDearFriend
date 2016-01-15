@@ -15,6 +15,7 @@
 		893A21C31C494BA900C37821 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 893A21C11C494BA900C37821 /* LaunchScreen.storyboard */; };
 		893A21CE1C494BA900C37821 /* MyDearFriendTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 893A21CD1C494BA900C37821 /* MyDearFriendTests.m */; };
 		893A21D91C494BA900C37821 /* MyDearFriendUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 893A21D81C494BA900C37821 /* MyDearFriendUITests.m */; };
+		893A21EA1C494E2F00C37821 /* MDFMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 893A21E91C494E2F00C37821 /* MDFMenu.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,9 @@
 		893A21D41C494BA900C37821 /* MyDearFriendUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyDearFriendUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		893A21D81C494BA900C37821 /* MyDearFriendUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyDearFriendUITests.m; sourceTree = "<group>"; };
 		893A21DA1C494BA900C37821 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		893A21E81C494E2F00C37821 /* MDFMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDFMenu.h; sourceTree = "<group>"; };
+		893A21E91C494E2F00C37821 /* MDFMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDFMenu.m; sourceTree = "<group>"; };
+		893A21EB1C494F0700C37821 /* MDFProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDFProtocol.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +105,7 @@
 		893A21B21C494BA900C37821 /* MyDearFriend */ = {
 			isa = PBXGroup;
 			children = (
+				893A21E61C494D8100C37821 /* MDF */,
 				893A21B61C494BA900C37821 /* AppDelegate.h */,
 				893A21B71C494BA900C37821 /* AppDelegate.m */,
 				893A21B91C494BA900C37821 /* ViewController.h */,
@@ -138,6 +143,16 @@
 				893A21DA1C494BA900C37821 /* Info.plist */,
 			);
 			path = MyDearFriendUITests;
+			sourceTree = "<group>";
+		};
+		893A21E61C494D8100C37821 /* MDF */ = {
+			isa = PBXGroup;
+			children = (
+				893A21EB1C494F0700C37821 /* MDFProtocol.h */,
+				893A21E81C494E2F00C37821 /* MDFMenu.h */,
+				893A21E91C494E2F00C37821 /* MDFMenu.m */,
+			);
+			name = MDF;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -270,6 +285,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				893A21EA1C494E2F00C37821 /* MDFMenu.m in Sources */,
 				893A21BB1C494BA900C37821 /* ViewController.m in Sources */,
 				893A21B81C494BA900C37821 /* AppDelegate.m in Sources */,
 				893A21B51C494BA900C37821 /* main.m in Sources */,
@@ -498,6 +514,7 @@
 				893A21DF1C494BA900C37821 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		893A21E01C494BA900C37821 /* Build configuration list for PBXNativeTarget "MyDearFriendTests" */ = {
 			isa = XCConfigurationList;
@@ -506,6 +523,7 @@
 				893A21E21C494BA900C37821 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		893A21E31C494BA900C37821 /* Build configuration list for PBXNativeTarget "MyDearFriendUITests" */ = {
 			isa = XCConfigurationList;
@@ -514,6 +532,7 @@
 				893A21E51C494BA900C37821 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
