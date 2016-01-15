@@ -1,3 +1,3 @@
 # MyDearFriend
-IOS GUI made by a programmer for programmes bypassing UX stuff we done understand
+IOS GUI made by a programmer for programmers bypassing UX stuff we done understand anyway.
 
