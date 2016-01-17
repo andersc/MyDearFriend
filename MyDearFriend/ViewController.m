@@ -21,7 +21,7 @@
 {
     NSArray *theSettings=[[NSArray alloc] initWithObjects:
                           
-                          @{@"keyMDFActivate" : [NSNumber numberWithInt:MDF_ACTIVATE_SLIDE],
+                          @{@"keyMDFActivate" : [NSNumber numberWithInt:MDF_ACTIVATE_SLIDE_RIGHT],
                           @"keyMDFAnimate"  : [NSNumber numberWithInt:MDF_ANIMATE_PARENT],
                           @"keyMDFAperance" : [NSNumber numberWithInt:MDF_BLUR_TROUGH]
                             },nil];
@@ -34,9 +34,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    myMenu=[[MDFMenu alloc] init:self];                 //Create a menu
-    NSArray *mySettings=[self populateSettings];        //Populate a NSArray with settings
-    [myMenu attachMenu:self.view settings:mySettings];  //Attach the menu to a UIView with the settings provided
+    myMenu=[[MDFMenu alloc] init:self];                         //Create a menu object and delegate callback to self.
+    NSArray *mySettings=[self populateSettings];                //Populate a NSArray with settings
+    if (![myMenu attachMenu:self.view settings:mySettings])     //Attach the menu to a UIView with the settings provided
+        NSLog(@"Failed ataching menu");
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -49,5 +51,9 @@
     
 }
 
+-(void) MDFError:(NSNumber*)MDFError MDFErrorString:(NSString*)MDFErrorString
+{
+    NSLog(@"MDF reported the folowing error: %@",MDFErrorString);
+}
 
 @end

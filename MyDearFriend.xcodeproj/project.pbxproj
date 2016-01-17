@@ -55,6 +55,7 @@
 		893A21E81C494E2F00C37821 /* MDFMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDFMenu.h; sourceTree = "<group>"; };
 		893A21E91C494E2F00C37821 /* MDFMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDFMenu.m; sourceTree = "<group>"; };
 		893A21EB1C494F0700C37821 /* MDFProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDFProtocol.h; sourceTree = "<group>"; };
+		89F699DC1C4C4EC70084D6BE /* MDFError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDFError.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				893A21EB1C494F0700C37821 /* MDFProtocol.h */,
+				89F699DC1C4C4EC70084D6BE /* MDFError.h */,
 				893A21E81C494E2F00C37821 /* MDFMenu.h */,
 				893A21E91C494E2F00C37821 /* MDFMenu.m */,
 			);

@@ -29,20 +29,9 @@
 #ifndef MDFProtocol_h
 #define MDFProtocol_h
 
-
-// Activation of the menu
-#define MDF_ACTIVATE_SLIDE_RIGHT    10      //Slide UIView to the right
-#define MDF_ACTIVATE_SLIDE_LEFT     11      //Slide UIView to the left
-#define MDF_ACTIVATE_DOUBLECLICK    12      //Double click the UIView
-#define MDF_ACTIVATE_LONGPRESS      13      //Touch the UIView for a duration configured by XXX
-
-#define MDF_ANIMATE_PARENT          20      //Animate the UIView when displaying the menu
-
-#define MDF_BLUR_TROUGH             30      //Blur the menu // "See trough" //
-
-
 @protocol MDFDelegate <NSObject>
 -(void) MDFCallback:(NSNumber*)CallbackNotification;
+-(void) MDFError:(NSNumber*)MDFError MDFErrorString:(NSString*)MDFErrorString;
 @end
 
 

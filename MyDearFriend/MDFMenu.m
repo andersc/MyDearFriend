@@ -38,10 +38,52 @@
     return self;
 }
 
--(void)attachMenu:(UIView*)parrentView settings:(NSArray*)settings
+-(BOOL)attachMenu:(UIView*)parrentView settings:(NSArray*)settings
 {
+    NSLog(@"%@",settings);
+    long MDFLocal;
+    @try {
+        MDFLocal=[[[settings valueForKey:@"keyMDFActivate"] objectAtIndex:0] integerValue];
+    }
+    @catch (NSException *exception) {
+        if (_adelegate)
+            [_adelegate MDFError:[NSNumber numberWithInt:MDF_ACTIVATE_KEY_ERROR] MDFErrorString:MDF_ACTIVATE_KEY_ERROR_TEXT];
+        return false;
+    }
+    
+    switch (MDFLocal) {
+        case MDF_ACTIVATE_SLIDE_RIGHT:
+            NSLog(@"Swipe Right");
+            break;
+        case MDF_ACTIVATE_SLIDE_LEFT:
+            NSLog(@"Swipe Left");
+            break;
+        case MDF_ACTIVATE_SLIDE_UP:
+            NSLog(@"Swipe Up");
+            break;
+        case MDF_ACTIVATE_SLIDE_DOWN:
+            NSLog(@"Swipe Down");
+            break;
+        case MDF_ACTIVATE_DOUBLECLICK:
+            NSLog(@"Swipe Double Click");
+            break;
+        case MDF_ACTIVATE_LONGPRESS:
+            NSLog(@"Swipe Long Press");
+            break;
+        case MDF_ACTIVATE_NO_ACTION:
+            NSLog(@"No action activation");
+            break;
+        default:
+            if (_adelegate)
+                [_adelegate MDFError:[NSNumber numberWithInt:MDF_ACTIVATE_UNKNOWN_CMD] MDFErrorString:MDF_ACTIVATE_UNKNOWN_CMD_TEXT];
+            return false;
+            break;
+    }
+    
+
     
     
+    return true;
     
 }
 

@@ -29,9 +29,23 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "MDFProtocol.h"
+#import "MDFError.h"
+
+// Activation of the menu
+#define MDF_ACTIVATE_SLIDE_RIGHT    10      //Slide UIView to the right
+#define MDF_ACTIVATE_SLIDE_LEFT     11      //Slide UIView to the left
+#define MDF_ACTIVATE_SLIDE_UP       12      //Slide UIView up
+#define MDF_ACTIVATE_SLIDE_DOWN     13      //Slide UIView down
+#define MDF_ACTIVATE_DOUBLECLICK    14      //Double click the UIView
+#define MDF_ACTIVATE_LONGPRESS      15      //Touch the UIView for a duration configured by XXX
+#define MDF_ACTIVATE_NO_ACTION      16      //No user action. The Menu can only be triggered by caling a method.
+
+#define MDF_ANIMATE_PARENT          20      //Animate the UIView when displaying the menu
+
+#define MDF_BLUR_TROUGH             30      //Blur the menu // "See trough" //
 
 @interface MDFMenu : NSObject
--(void)attachMenu:(UIView*)parrentView settings:(NSArray*)settings;
+-(BOOL)attachMenu:(UIView*)parrentView settings:(NSArray*)settings;
 -(id)init:(id)newDelegate;
 @property id <MDFDelegate> adelegate;
 
