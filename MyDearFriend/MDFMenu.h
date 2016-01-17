@@ -27,7 +27,12 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "MDFProtocol.h"
 
 @interface MDFMenu : NSObject
+-(void)attachMenu:(UIView*)parrentView settings:(NSArray*)settings;
+-(id)init:(id)newDelegate;
+@property id <MDFDelegate> adelegate;
 
 @end

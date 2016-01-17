@@ -30,4 +30,19 @@
 
 @implementation MDFMenu
 
+-(id)init:(id)newDelegate {
+    self = [super init];
+    if (self) {
+        _adelegate = newDelegate;
+    }
+    return self;
+}
+
+-(void)attachMenu:(UIView*)parrentView settings:(NSArray*)settings
+{
+    
+    
+    
+}
+
 @end

@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "MDFMenu.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <MDFDelegate>
 
 
 @end
