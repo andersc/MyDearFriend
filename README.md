@@ -9,7 +9,7 @@ When creating simple applications where I just want a simple meny for actions it
 2. Init 'my dear friend'
 3. Give it some settings
 4. Attatch it your view
-5. Done!
+
 
     myMenu=[[MDFMenu alloc] init:self];                         //Create a menu object and delegate callback to self.
     NSArray *mySettings=[self populateSettings];                //Populate a NSArray with settings
