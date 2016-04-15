@@ -29,7 +29,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "MDFProtocol.h"
-#import "MDFError.h"
 
 // Activation of the menu
 #define MDF_ACTIVATE_SLIDE_RIGHT    10      //Slide UIView to the right
@@ -40,13 +39,30 @@
 #define MDF_ACTIVATE_LONGPRESS      15      //Touch the UIView for a duration configured by XXX
 #define MDF_ACTIVATE_NO_ACTION      16      //No user action. The Menu can only be triggered by caling a method.
 
-#define MDF_ANIMATE_PARENT          20      //Animate the UIView when displaying the menu
+#define MDF_ANIMATE_PARENT_YES      20      //Animate the UIView when displaying the menu
+#define MDF_ANIMATE_PARENT_NO       21      //Do not animate the UIView when displaying the menu
 
 #define MDF_BLUR_TROUGH             30      //Blur the menu // "See trough" //
 
-@interface MDFMenu : NSObject
--(BOOL)attachMenu:(UIView*)parrentView settings:(NSArray*)settings;
+#define MDF_TOUCH_YES               40      //Attach a touch recognizer to your view
+#define MDF_TOUCH_NO                41      //If you only want to show the menu using the 'show' method
+
+@interface MDFMenu : NSObject <UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
+-(BOOL)attachMenu:(UIView*)parrentView;
 -(id)init:(id)newDelegate;
+-(void) showMenu;
+-(void) hideMenu;
+-(bool) isVisible;
+-(bool) isEnabled;
+-(void) disableMenu;
+-(void) enableMenu;
 @property id <MDFDelegate> adelegate;
+
+@property NSNumber *MDFMenuAction;
+@property NSNumber *MDFMenuAnimate;
+@property NSNumber *MDFMenuEffect;
+@property NSNumber *MDFMenuUseTouch;
+@property NSNumber *MDFMenuSize;
+@property NSMutableArray *MDFMenuItems;
 
 @end

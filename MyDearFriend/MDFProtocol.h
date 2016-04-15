@@ -34,5 +34,16 @@
 -(void) MDFError:(NSNumber*)MDFError MDFErrorString:(NSString*)MDFErrorString;
 @end
 
+//MDFError
+#define MDF_ACTIVATE_UNKNOWN_CMD        0x00001001
+#define MDF_ACTIVATE_UNKNOWN_CMD_TEXT   @"MDF Activate unknown parameter"
+#define MDF_POSITION_UNKNOWN_CMD        0x00001002
+#define MDF_POSITION_UNKNOWN_CMD_TEXT   @"MDF Menu position unknown"
+
+//MDFCallback
+#define MDF_MENU_APPEAR                 0x00002001
+#define MDF_MENU_DISAPPEAR              0x00002002
+#define MDF_MENU_ENABLE                 0x00002003
+#define MDF_MENU_DISABLE                0x00002004
 
 #endif /* MDFProtocol_h */
