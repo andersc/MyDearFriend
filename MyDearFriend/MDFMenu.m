@@ -493,8 +493,11 @@
         if (menuStartedExpanded) {
             if (((fabs(refPosition.origin.y-newPosition.origin.y) < (menuPixelWidth-(menuPixelWidth/4))) * nudgeFactorY) || ((fabs(refPosition.origin.x-newPosition.origin.x) < (menuPixelWidth-menuPixelWidth/4)) * nudgeFactorX)|| !(nudgeFactorX || nudgeFactorY))
             {
-                NSLog(@"HERE!!");
-                menuShouldStay=false;
+
+                if (((fabs(refPosition.origin.x-newPosition.origin.x) < (menuPixelWidth-menuPixelWidth/4)) * nudgeFactorX) || ((fabs(refPosition.origin.y-newPosition.origin.y) < (menuPixelWidth-(menuPixelWidth/4))) * nudgeFactorY)) {
+                    menuShouldStay=false;
+                }
+                
             }
             else
             {
