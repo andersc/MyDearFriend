@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		890DBEEE1CC26FAC0064A2D1 /* vma.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 890DBEED1CC26FAC0064A2D1 /* vma.jpg */; };
 		893A21B51C494BA900C37821 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 893A21B41C494BA900C37821 /* main.m */; };
 		893A21B81C494BA900C37821 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 893A21B71C494BA900C37821 /* AppDelegate.m */; };
 		893A21BB1C494BA900C37821 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 893A21BA1C494BA900C37821 /* ViewController.m */; };
@@ -136,6 +137,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		890DBEED1CC26FAC0064A2D1 /* vma.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = vma.jpg; sourceTree = "<group>"; };
 		893A21B01C494BA900C37821 /* MyDearFriend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyDearFriend.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		893A21B41C494BA900C37821 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		893A21B61C494BA900C37821 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 		893A21B31C494BA900C37821 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				890DBEED1CC26FAC0064A2D1 /* vma.jpg */,
 				89F4E9121C597D4600E334F3 /* icons */,
 				893A21B41C494BA900C37821 /* main.m */,
 			);
@@ -616,6 +619,7 @@
 				89F4E9931C597D6D00E334F3 /* drink-coffee.png in Resources */,
 				89F4E9D61C597D6D00E334F3 /* user.png in Resources */,
 				89F4E9C91C597D6D00E334F3 /* skull.png in Resources */,
+				890DBEEE1CC26FAC0064A2D1 /* vma.jpg in Resources */,
 				89F4E9A61C597D6D00E334F3 /* iphone.png in Resources */,
 				89F4E99B1C597D6D00E334F3 /* gauge.png in Resources */,
 				89F4E9C11C597D6D00E334F3 /* remote-control-hand.png in Resources */,

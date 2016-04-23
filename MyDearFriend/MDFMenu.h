@@ -31,38 +31,49 @@
 #import "MDFProtocol.h"
 
 // Activation of the menu
-#define MDF_ACTIVATE_SLIDE_RIGHT    10      //Slide UIView to the right
-#define MDF_ACTIVATE_SLIDE_LEFT     11      //Slide UIView to the left
-#define MDF_ACTIVATE_SLIDE_UP       12      //Slide UIView up
-#define MDF_ACTIVATE_SLIDE_DOWN     13      //Slide UIView down
-#define MDF_ACTIVATE_DOUBLECLICK    14      //Double click the UIView
-#define MDF_ACTIVATE_LONGPRESS      15      //Touch the UIView for a duration configured by XXX
-#define MDF_ACTIVATE_NO_ACTION      16      //No user action. The Menu can only be triggered by caling a method.
+#define MDF_MENU_LOCATION_RIGHT     10      //Slide UIView to the right
+#define MDF_MENU_LOCATION_LEFT      11      //Slide UIView to the left
+#define MDF_MENU_LOCATION_DOWN      12      //Slide UIView up
+#define MDF_MENU_LOCATION_UP        13      //Slide UIView down
 
-#define MDF_ANIMATE_PARENT_YES      20      //Animate the UIView when displaying the menu
-#define MDF_ANIMATE_PARENT_NO       21      //Do not animate the UIView when displaying the menu
+#define MDF_BLUR                    30      //Blur the menu
+#define MDF_ALPHA                   31      //Alpha blend the meny
+#define MDF_PLAIN                   32      //No effect
 
-#define MDF_BLUR_TROUGH             30      //Blur the menu // "See trough" //
+#define MDF_ANIMATE_PARENT_YES      true      //Animate the UIView when displaying the menu
+#define MDF_ANIMATE_PARENT_NO       false      //Do not animate the UIView when displaying the menu
 
-#define MDF_TOUCH_YES               40      //Attach a touch recognizer to your view
-#define MDF_TOUCH_NO                41      //If you only want to show the menu using the 'show' method
+#define MDF_TOUCH_YES               true      //Attach a touch recognizer to your view
+#define MDF_TOUCH_NO                false      //If you only want to show the menu using the 'show' method
+
+#define MDF_USE_COLOR_YES           true    //Use the submitted icon color
+#define MDF_USE_COLOR_NO            false   //Do not use the submitted icon color
+
+#define MDF_HIDE_AFTER_ACTION_YES   true    //Hide the menu after item selection
+#define MDF_HIDE_AFTER_ACTION_NO    false   //Do not hide menu after item selection
 
 @interface MDFMenu : NSObject <UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
--(BOOL)attachMenu:(UIView*)parrentView;
--(id)init:(id)newDelegate;
+-(BOOL) attachMenu:(UIView*)parrentView;
+-(id) init:(id)newDelegate;
 -(void) showMenu;
 -(void) hideMenu;
 -(bool) isVisible;
 -(bool) isEnabled;
 -(void) disableMenu;
 -(void) enableMenu;
+-(void) visualHideMenu;
+-(void) visualShowMenu;
 @property id <MDFDelegate> adelegate;
 
 @property NSNumber *MDFMenuAction;
-@property NSNumber *MDFMenuAnimate;
+@property bool      MDFMenuAnimate;
 @property NSNumber *MDFMenuEffect;
-@property NSNumber *MDFMenuUseTouch;
+@property UIColor  *MDFMenuColor;
+@property bool      MDFMenuColorUsage;
+@property bool      MDFMenuUseTouch;
+@property bool      MDFMenuHideAfterAction;
 @property NSNumber *MDFMenuSize;
+
 @property NSMutableArray *MDFMenuItems;
 
 @end

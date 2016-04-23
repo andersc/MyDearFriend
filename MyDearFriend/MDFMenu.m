@@ -29,23 +29,21 @@
 #import "MDFMenu.h"
 
 @implementation MDFMenu {
-    CGPoint startLocation;
-    UIView  *parrentViewSticky;
-    NSNumber *inAction;
-    float menuPixelWidth;
-    UICollectionView *myCollectionView;
-    CGRect menuPosition;
-    CGRect mainViewPosition;
-    bool menuShouldStay;
-    float nudgeFactorX;
-    float nudgeFactorY;
-    UIBlurEffect *blurEffect;
-    UIVisualEffectView *visualEffectView;
-    bool menuStartedExpanded;
-    bool enableDisableFlag;
+    CGPoint             startLocation;
+    UIView              *parrentViewSticky;
+    NSNumber            *inAction;
+    float               menuPixelWidth;
+    UICollectionView    *myCollectionView;
+    CGRect              menuPosition;
+    CGRect              mainViewPosition;
+    bool                menuShouldStay;
+    float               nudgeFactorX;
+    float               nudgeFactorY;
+    bool                menuStartedExpanded;
+    bool                enableDisableFlag;
 }
 
--(id)init:(id)newDelegate {
+-(id) init:(id)newDelegate {
     self = [super init];
     if (self) {
         _adelegate = newDelegate;
@@ -58,9 +56,18 @@
     return self;
 }
 
+-(void) visualHideMenu
+{
+    myCollectionView.hidden=true;
+}
+-(void) visualShowMenu
+{
+    myCollectionView.hidden=false;
+}
+
 -(void) addPanRecognizer
 {
-    if ([_MDFMenuUseTouch integerValue] == MDF_TOUCH_YES ) {
+    if (_MDFMenuUseTouch) {
         
         UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc]
                                                  initWithTarget:self
@@ -74,20 +81,35 @@
 
 -(void)makeMenu:(CGRect)myMeny {
     UICollectionViewFlowLayout *layout=[[UICollectionViewFlowLayout alloc] init];
-    //layout.minimumInteritemSpacing=1.0f;
     
     myCollectionView=[[UICollectionView alloc] initWithFrame:myMeny collectionViewLayout:layout];
     [myCollectionView setDataSource:self];
     [myCollectionView setDelegate:self];
     
     [myCollectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"cellIdentifier"];
-    [myCollectionView setBackgroundColor:[UIColor blueColor]];
     
-    //Add blur effect to the icon bar
-    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-    [visualEffectView setFrame:myCollectionView.bounds];
-    myCollectionView.backgroundView=visualEffectView;
+    //myCollectionView.userInteractionEnabled=false;
+    
+    if ([_MDFMenuEffect intValue]==MDF_BLUR) {
+        //Add blur effect to the icon bar
+        [myCollectionView setBackgroundColor:[UIColor clearColor]];
+        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+        UIVisualEffectView *visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+        [visualEffectView setFrame:myCollectionView.bounds];
+        myCollectionView.backgroundView=visualEffectView;
+    }
+    else if ([_MDFMenuEffect intValue]==MDF_ALPHA) {
+        myCollectionView.alpha=0.5f;
+        [myCollectionView setBackgroundColor:_MDFMenuColor];
+    }
+    else if ([_MDFMenuEffect intValue]==MDF_PLAIN) {
+        [myCollectionView setBackgroundColor:_MDFMenuColor];
+    }
+    else
+    {
+        if (_adelegate)
+            [_adelegate MDFError:[NSNumber numberWithInt:MDF_EFFECT_UNKNOWN_CMD] MDFErrorString:MDF_EFFECT_UNKNOWN_CMD_TEXT];
+    }
     
     [parrentViewSticky addSubview:myCollectionView];
 }
@@ -96,14 +118,12 @@
 {
     parrentViewSticky=parrentView;
     mainViewPosition=parrentView.frame;
-    parrentView.backgroundColor = [UIColor redColor];
     parrentView.userInteractionEnabled=YES;
     
     menuPixelWidth=parrentView.frame.size.width*[_MDFMenuSize floatValue];
     
     switch ([_MDFMenuAction integerValue]) {
-        case MDF_ACTIVATE_SLIDE_RIGHT:
-            NSLog(@"Swipe Right");
+        case MDF_MENU_LOCATION_LEFT:
             menuPosition= CGRectMake(parrentView.frame.origin.x-menuPixelWidth,
                                      parrentView.frame.origin.y,
                                      menuPixelWidth,
@@ -111,8 +131,7 @@
             [self addPanRecognizer];
             [self makeMenu:menuPosition];
             break;
-        case MDF_ACTIVATE_SLIDE_LEFT:
-            NSLog(@"Swipe Left");
+        case MDF_MENU_LOCATION_RIGHT:
             menuPosition= CGRectMake(parrentView.frame.origin.x+parrentView.frame.size.width,
                                      parrentView.frame.origin.y,
                                      menuPixelWidth,
@@ -120,32 +139,21 @@
             [self addPanRecognizer];
             [self makeMenu:menuPosition];
             break;
-        case MDF_ACTIVATE_SLIDE_UP:
+        case MDF_MENU_LOCATION_DOWN:
             menuPosition= CGRectMake(parrentView.frame.origin.x,
                                      parrentView.frame.origin.y+parrentView.frame.size.height,
                                      parrentView.frame.size.width,
                                      menuPixelWidth);
-            NSLog(@"Swipe Up");
             [self addPanRecognizer];
             [self makeMenu:menuPosition];
             break;
-        case MDF_ACTIVATE_SLIDE_DOWN:
+        case MDF_MENU_LOCATION_UP:
             menuPosition= CGRectMake(parrentView.frame.origin.x,
                                      parrentView.frame.origin.y-menuPixelWidth,
                                      parrentView.frame.size.width,
                                      menuPixelWidth);
-            NSLog(@"Swipe Down");
             [self addPanRecognizer];
             [self makeMenu:menuPosition];
-            break;
-        case MDF_ACTIVATE_DOUBLECLICK:
-            NSLog(@"Double Click");
-            break;
-        case MDF_ACTIVATE_LONGPRESS:
-            NSLog(@"Long Press");
-            break;
-        case MDF_ACTIVATE_NO_ACTION:
-            NSLog(@"No action activation");
             break;
         default:
             if (_adelegate)
@@ -153,9 +161,7 @@
             return false;
             break;
     }
-    
     return true;
-    
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
@@ -163,27 +169,50 @@
     return [_MDFMenuItems count];
 }
 
+
 // The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    
     UICollectionViewCell *cell=[collectionView dequeueReusableCellWithReuseIdentifier:@"cellIdentifier" forIndexPath:indexPath];
     
-    NSArray *currentItem=[_MDFMenuItems objectAtIndex:0];
-    [_MDFMenuItems removeObjectAtIndex:0];
-    
+    NSArray *currentItem=[_MDFMenuItems objectAtIndex:indexPath.row];
     
     NSString *filename=[currentItem objectAtIndex:0];
     
-    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:filename]];
-    
-    cell.backgroundColor=[UIColor greenColor];
+    UIImageView *theIcon=[[UIImageView alloc] initWithImage:[UIImage imageNamed:filename]];
+    theIcon.contentMode=UIViewContentModeScaleAspectFit;
+    if (_MDFMenuColorUsage)
+    {
+        if ([_MDFMenuEffect intValue]==MDF_BLUR)
+            cell.backgroundColor=[[currentItem objectAtIndex:1] colorWithAlphaComponent:0.4f];
+        if ([_MDFMenuEffect intValue]==MDF_ALPHA)
+            cell.backgroundColor=[[currentItem objectAtIndex:1] colorWithAlphaComponent:0.7f];
+        if ([_MDFMenuEffect intValue]==MDF_PLAIN)
+            cell.backgroundColor=[currentItem objectAtIndex:1];
+    }
+    cell.backgroundView = theIcon;
     
     return cell;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake(menuPixelWidth, menuPixelWidth);
+    float iconWidth=menuPixelWidth;
+    float iconHight=menuPixelWidth;
+    if (([_MDFMenuAction integerValue] == MDF_MENU_LOCATION_UP) || ([_MDFMenuAction integerValue] == MDF_MENU_LOCATION_DOWN)) {
+        iconWidth=parrentViewSticky.frame.size.width/([_MDFMenuItems count]+.1f);
+        if (iconWidth>menuPixelWidth)
+            iconWidth=menuPixelWidth;
+        
+    }
+    if (([_MDFMenuAction integerValue] == MDF_MENU_LOCATION_LEFT) || ([_MDFMenuAction integerValue] == MDF_MENU_LOCATION_RIGHT)) {
+        iconHight=parrentViewSticky.frame.size.height/([_MDFMenuItems count]+.1f);
+        if (iconHight>menuPixelWidth)
+            iconHight=menuPixelWidth;
+        
+    }
+    return CGSizeMake(iconWidth, iconHight);
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView*)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
@@ -199,19 +228,48 @@
     return 0.0;
 }
 
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+    
+    // animate the cell user tapped on
+    UICollectionViewCell  *cell = [collectionView cellForItemAtIndexPath:indexPath];
+    
+    UIColor *saveColor=cell.backgroundColor;
+    cell.backgroundColor=[UIColor whiteColor];
+    
+    [UIView animateWithDuration:0.1f
+                          delay:0
+                        options:(UIViewAnimationOptionAllowUserInteraction)
+                     animations:^{
+                         cell.backgroundColor=saveColor;
+                         
+                     }
+                     completion:^(BOOL finished){
+                     }
+     ];
+    
+    NSMutableArray *theItem=[_MDFMenuItems objectAtIndex:(NSUInteger)indexPath.row];
+    
+    if (_adelegate)
+        [_adelegate MDFCallback:[NSNumber numberWithInt:MDF_MENU_SELECTION] selectionIndex:[theItem objectAtIndex:2]];
+    
+    if (_MDFMenuHideAfterAction && _adelegate) {
+        [self hideMenu];
+    }
+}
+
 -(void) disableMenu
 {
     [self hideMenu];
     enableDisableFlag=false;
     if (_adelegate)
-        [_adelegate MDFCallback:[NSNumber numberWithInt:MDF_MENU_DISABLE]];
+        [_adelegate MDFCallback:[NSNumber numberWithInt:MDF_MENU_DISABLE] selectionIndex:nil];
 }
 
 -(void) enableMenu
 {
     enableDisableFlag=true;
     if (_adelegate)
-        [_adelegate MDFCallback:[NSNumber numberWithInt:MDF_MENU_ENABLE]];
+        [_adelegate MDFCallback:[NSNumber numberWithInt:MDF_MENU_ENABLE] selectionIndex:nil];
 }
 
 -(bool) isEnabled
@@ -233,16 +291,16 @@
     nudgeFactorX=0;
     nudgeFactorY=0;
     switch ([_MDFMenuAction integerValue]) {
-        case MDF_ACTIVATE_SLIDE_RIGHT:
+        case MDF_MENU_LOCATION_LEFT:
             nudgeFactorX=menuPixelWidth;
             break;
-        case MDF_ACTIVATE_SLIDE_LEFT:
+        case MDF_MENU_LOCATION_RIGHT:
             nudgeFactorX=menuPixelWidth*-1;
             break;
-        case MDF_ACTIVATE_SLIDE_UP:
+        case MDF_MENU_LOCATION_DOWN:
             nudgeFactorY=menuPixelWidth*-1;
             break;
-        case MDF_ACTIVATE_SLIDE_DOWN:
+        case MDF_MENU_LOCATION_UP:
             nudgeFactorY=menuPixelWidth;
             break;
         default:
@@ -252,7 +310,7 @@
             break;
     }
     
-    if ([_MDFMenuAnimate integerValue] == MDF_ANIMATE_PARENT_YES) {
+    if (_MDFMenuAnimate) {
         CGRect newPosition=CGRectMake(nudgeFactorX, nudgeFactorY, parrentViewSticky.frame.size.width, parrentViewSticky.frame.size.height);
         
         [UIView animateWithDuration:0.2f
@@ -262,8 +320,6 @@
                              parrentViewSticky.frame=newPosition;
                          } completion:^(BOOL finished){
                          } ];
-        
-        
     }
     else
     {
@@ -275,12 +331,13 @@
                              myCollectionView.frame=newPosition;
                          } completion:^(BOOL finished){
                          } ];
-        
     }
     
-    if (_adelegate)
-        [_adelegate MDFCallback:[NSNumber numberWithInt:MDF_MENU_APPEAR]];
-    
+    if (!menuStartedExpanded) {
+        if (_adelegate)
+            [_adelegate MDFCallback:[NSNumber numberWithInt:MDF_MENU_APPEAR] selectionIndex:nil];
+    }
+    menuStartedExpanded=true;
 }
 
 -(void) hideMenu {
@@ -288,7 +345,7 @@
     nudgeFactorX=0;
     nudgeFactorY=0;
     
-    if ([_MDFMenuAnimate integerValue] == MDF_ANIMATE_PARENT_YES) {
+    if (_MDFMenuAnimate) {
         CGRect newPosition=CGRectMake(0, 0, parrentViewSticky.frame.size.width, parrentViewSticky.frame.size.height);
         
         [UIView animateWithDuration:0.2f
@@ -310,8 +367,11 @@
                          } ];
         
     }
-    if (_adelegate)
-        [_adelegate MDFCallback:[NSNumber numberWithInt:MDF_MENU_DISAPPEAR]];
+    if (menuStartedExpanded) {
+        if (_adelegate)
+            [_adelegate MDFCallback:[NSNumber numberWithInt:MDF_MENU_DISAPPEAR] selectionIndex:nil];
+    }
+    menuStartedExpanded=false;
 }
 
 - (void)panGesture:(UIPanGestureRecognizer *)sender {
@@ -330,21 +390,15 @@
         {
             menuStartedExpanded=false;
         }
-        NSLog(@"Swipe began %d",menuStartedExpanded);
-        //kolla om man börjar en touch som inte kommer gå att slutföra
     }
     else if (sender.state == UIGestureRecognizerStateEnded) {
-        NSLog(@"Swipe ended %d",menuShouldStay);
         if (menuShouldStay)
         {
             [self showMenu];
         }
         else
         {
-            
             [self hideMenu];
-            
-            
         }
     }
     else {
@@ -354,8 +408,7 @@
         
         CGRect newPosition;
         
-        
-        if ([_MDFMenuAnimate integerValue] == MDF_ANIMATE_PARENT_YES) {
+        if (_MDFMenuAnimate) {
             
             newPosition=mainViewPosition;
         }
@@ -370,7 +423,7 @@
         CGRect refPosition=newPosition;
         
         switch ([_MDFMenuAction integerValue]) {
-            case MDF_ACTIVATE_SLIDE_RIGHT:
+            case MDF_MENU_LOCATION_LEFT:
                 if (swipeDistanceX > menuPixelWidth)
                 {
                     nudgeFactorX=0;
@@ -382,10 +435,9 @@
                     startLocation.x=stopLocation.x+nudgeFactorX;
                     newPosition=refPosition;
                 }
-                
                 break;
                 
-            case MDF_ACTIVATE_SLIDE_LEFT:
+            case MDF_MENU_LOCATION_RIGHT:
                 
                 if (swipeDistanceX < (menuPixelWidth*-1))
                 {
@@ -399,10 +451,9 @@
                     startLocation.x=stopLocation.x+nudgeFactorX;
                     newPosition=refPosition;
                 }
-                
                 break;
                 
-            case MDF_ACTIVATE_SLIDE_DOWN:
+            case MDF_MENU_LOCATION_UP:
                 
                 if (swipeDistanceY > menuPixelWidth)
                 {
@@ -415,10 +466,9 @@
                     startLocation.y=stopLocation.y+nudgeFactorY;
                     newPosition=refPosition;
                 }
-                
                 break;
                 
-            case MDF_ACTIVATE_SLIDE_UP:
+            case MDF_MENU_LOCATION_DOWN:
                 
                 if (swipeDistanceY < (menuPixelWidth*-1))
                 {
@@ -432,7 +482,6 @@
                     startLocation.y=stopLocation.y+nudgeFactorY;
                     newPosition=refPosition;
                 }
-                
                 break;
                 
             default:
@@ -441,15 +490,10 @@
                 break;
         }
         
-        //  NSLog(@" %f %f", swipeDistanceX,swipeDistanceX);
-        
-        //NSLog(@"%f",fabs(refPosition.origin.y-newPosition.origin.y));
-        
-        
         if (menuStartedExpanded) {
-            NSLog(@"igot %f %f",fabs(refPosition.origin.x-newPosition.origin.x),fabs(refPosition.origin.y-newPosition.origin.y));
             if (((fabs(refPosition.origin.y-newPosition.origin.y) < (menuPixelWidth-(menuPixelWidth/4))) * nudgeFactorY) || ((fabs(refPosition.origin.x-newPosition.origin.x) < (menuPixelWidth-menuPixelWidth/4)) * nudgeFactorX)|| !(nudgeFactorX || nudgeFactorY))
             {
+                NSLog(@"HERE!!");
                 menuShouldStay=false;
             }
             else
@@ -462,7 +506,6 @@
             if (fabs(refPosition.origin.y-newPosition.origin.y) > menuPixelWidth/4 || fabs(refPosition.origin.x-newPosition.origin.x) > menuPixelWidth/4)
             {
                 menuShouldStay=true;
-                //NSLog(@"HERE!!");
             }
             else
             {
@@ -470,16 +513,13 @@
             }
         }
         
-        if ([_MDFMenuAnimate integerValue] == MDF_ANIMATE_PARENT_YES) {
+        if (_MDFMenuAnimate) {
             parrentViewSticky.frame=newPosition; //newPosition is always initialized
         }
         else
         {
             myCollectionView.frame=newPosition; //newPosition is always initialized
         }
-        
-        
-        // NSLog(@"Dist: %f %f",swipeDistanceX,parrentViewSticky.frame.origin.y);
     }
     
 }

@@ -16,6 +16,7 @@
 {
     MDFMenu *myMenu;
     
+    UIImageView *myImage;
     UIButton *buttonDisableEnable;
     UIButton *buttonShowHide;
     bool     isMenuVisible;
@@ -23,11 +24,14 @@
 
 -(void) populateSettings
 {
-    myMenu.MDFMenuAction=[NSNumber numberWithInt:MDF_ACTIVATE_SLIDE_LEFT];
-    myMenu.MDFMenuAnimate=[NSNumber numberWithInt:MDF_ANIMATE_PARENT_NO];
-    myMenu.MDFMenuEffect=[NSNumber numberWithInt:MDF_BLUR_TROUGH];
-    myMenu.MDFMenuUseTouch=[NSNumber numberWithInt:MDF_TOUCH_YES];
-    myMenu.MDFMenuSize=[NSNumber numberWithFloat:0.20];
+    myMenu.MDFMenuAction=[NSNumber numberWithInt:MDF_MENU_LOCATION_RIGHT];
+    myMenu.MDFMenuAnimate=MDF_ANIMATE_PARENT_NO;
+    myMenu.MDFMenuEffect=[NSNumber numberWithInt:MDF_BLUR];
+    myMenu.MDFMenuUseTouch=MDF_TOUCH_YES;
+    myMenu.MDFMenuHideAfterAction=MDF_HIDE_AFTER_ACTION_YES;
+    myMenu.MDFMenuSize=[NSNumber numberWithFloat:0.2f];
+    myMenu.MDFMenuColor=[UIColor clearColor];
+    myMenu.MDFMenuColorUsage=MDF_USE_COLOR_NO;
     
     myMenu.MDFMenuItems=[[NSMutableArray alloc] init];
     NSArray *menuItem=@[@"book.png", [UIColor blueColor], [NSNumber numberWithInteger:BOOK_ACTION]];
@@ -38,36 +42,20 @@
     [myMenu.MDFMenuItems addObject:menuItem];
     menuItem=@[@"e-mail.png", [UIColor purpleColor], [NSNumber numberWithInteger:EMAIL_ACTION]];
     [myMenu.MDFMenuItems addObject:menuItem];
-    menuItem=@[@"heart.png", [UIColor blackColor], [NSNumber numberWithInteger:HEART_ACTION]];
+    menuItem=@[@"heart.png", [UIColor cyanColor], [NSNumber numberWithInteger:HEART_ACTION]];
     [myMenu.MDFMenuItems addObject:menuItem];
     menuItem=@[@"home.png", [UIColor redColor], [NSNumber numberWithInteger:HOME_ACTION]];
     [myMenu.MDFMenuItems addObject:menuItem];
-    
-    NSLog(@"Num items %lu",(unsigned long)[myMenu.MDFMenuItems count]);
-    
 }
 
 - (void)button1Pressed:(UIButton *)button {
-    
-    if([myMenu isEnabled])
-    {
-        [myMenu disableMenu];
-    }
-    else
-    {
-        [myMenu enableMenu];
-    }
-    
+    if([myMenu isEnabled]) [myMenu disableMenu];
+    else [myMenu enableMenu];
 }
+
 - (void)button2Pressed:(UIButton *)button {
-    if([myMenu isVisible])
-    {
-        [myMenu hideMenu];
-    }
-    else
-    {
-        [myMenu showMenu];
-    }
+    if([myMenu isVisible]) [myMenu hideMenu];
+    else [myMenu showMenu];
 }
 
 -(void) attatchButtons
@@ -91,6 +79,13 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
+    
+    
+    myImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"vma.jpg"]];
+    myImage.frame=self.view.frame;
+    myImage.contentMode=UIViewContentModeScaleAspectFill;
+    [self.view addSubview:myImage];
+    
     [self attatchButtons];
     
     // This is the MDF part
@@ -99,6 +94,45 @@
     if (![myMenu attachMenu:self.view])     //Attach the menu to a UIView with the settings provided
         NSLog(@"Failed ataching menu");
     //End of the MDF part
+    
+    UIInterfaceOrientationMask k=[self supportedInterfaceOrientations];
+    NSLog(@"The maske says: %ld",k);
+}
+
+-(void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    NSLog(@"will rotate");
+    [myMenu hideMenu];
+    [myMenu visualHideMenu];
+    buttonDisableEnable.hidden=true;
+    buttonShowHide.hidden=true;
+    
+    if (toInterfaceOrientation == UIDeviceOrientationPortrait || toInterfaceOrientation == UIDeviceOrientationPortraitUpsideDown) {
+        NSLog(@"Portrait");
+        myMenu.MDFMenuSize=[NSNumber numberWithFloat:0.2f];
+    }
+    if (toInterfaceOrientation == UIDeviceOrientationLandscapeLeft || toInterfaceOrientation == UIDeviceOrientationLandscapeRight) {
+        NSLog(@"Landscape");
+        myMenu.MDFMenuSize=[NSNumber numberWithFloat:0.1125f];
+    }
+
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    NSLog(@"did rotate");
+    [myMenu attachMenu:self.view];
+     myImage.frame=self.view.frame;
+    buttonDisableEnable.center = CGPointMake(self.view.center.x, self.view.center.y+buttonDisableEnable.frame.size.height);
+    buttonShowHide.center = CGPointMake(self.view.center.x, self.view.center.y-buttonShowHide.frame.size.height);
+    [myMenu visualShowMenu];
+    buttonDisableEnable.hidden=false;
+    buttonShowHide.hidden=false;
+}
+
+- (BOOL)shouldAutorotate
+{
+    return YES;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -106,15 +140,42 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void) MDFCallback:(NSNumber*)CallbackNotification
+
+-(void)doAction:(NSNumber*)selectionIndex
+{
+    switch ([selectionIndex longValue]) {
+        case BOOK_ACTION:
+            NSLog(@"BOOK_ACTION");
+            break;
+        case CLOCK_ACTION:
+            NSLog(@"CLOCK_ACTION");
+            break;
+        case CROWN_ACTION:
+            NSLog(@"CROWN_ACTION");
+            break;
+        case EMAIL_ACTION:
+            NSLog(@"EMAIL_ACTION");
+            break;
+        case HEART_ACTION:
+            NSLog(@"HEART_ACTION");
+            break;
+        case HOME_ACTION:
+            NSLog(@"HOME_ACTION");
+            break;
+        default:
+            NSLog(@"MDF Menu unknown action");
+            break;
+    }
+
+}
+
+-(void) MDFCallback:(NSNumber*)CallbackNotification selectionIndex:(NSNumber*)selectionIndex
 {
     switch ([CallbackNotification intValue]) {
         case MDF_MENU_APPEAR:
-            NSLog(@"Menu on display");
             [buttonShowHide setTitle:@"Hide Menu" forState:UIControlStateNormal];
             break;
         case MDF_MENU_DISAPPEAR:
-            NSLog(@"Menu hidden");
             [buttonShowHide setTitle:@"Show Menu" forState:UIControlStateNormal];
             break;
         case MDF_MENU_ENABLE:
@@ -123,6 +184,10 @@
         case MDF_MENU_DISABLE:
             [buttonDisableEnable setTitle:@"Enable Menu" forState:UIControlStateNormal];
             break;
+        case MDF_MENU_SELECTION:
+            [self doAction:selectionIndex];
+            break;
+        
         default:
             NSLog(@"MDF Menu unknown callback");
             break;
