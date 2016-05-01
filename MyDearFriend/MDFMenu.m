@@ -31,7 +31,6 @@
 @implementation MDFMenu {
     CGPoint             startLocation;
     UIView              *parrentViewSticky;
-    NSNumber            *inAction;
     float               menuPixelWidth;
     UICollectionView    *myCollectionView;
     CGRect              menuPosition;
@@ -46,7 +45,9 @@
 -(id) init:(id)newDelegate {
     self = [super init];
     if (self) {
-        _adelegate = newDelegate;
+        _adelegate = newDelegate;   //set callback delegate
+        
+        //Set start values
         menuShouldStay=0;
         nudgeFactorX=0;
         nudgeFactorY=0;
@@ -56,14 +57,21 @@
     return self;
 }
 
+//Hide menu without detatching
+
 -(void) visualHideMenu
 {
     myCollectionView.hidden=true;
 }
+
+//Show the menu already attached
+
 -(void) visualShowMenu
 {
     myCollectionView.hidden=false;
 }
+
+//Add the touch recognizer
 
 -(void) addPanRecognizer
 {
@@ -79,16 +87,15 @@
     }
 }
 
+//Build the menu using a UICollectionView
+//Set the effects asked for and attach to the UIView
+
 -(void)makeMenu:(CGRect)myMeny {
     UICollectionViewFlowLayout *layout=[[UICollectionViewFlowLayout alloc] init];
-    
     myCollectionView=[[UICollectionView alloc] initWithFrame:myMeny collectionViewLayout:layout];
     [myCollectionView setDataSource:self];
     [myCollectionView setDelegate:self];
-    
     [myCollectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"cellIdentifier"];
-    
-    //myCollectionView.userInteractionEnabled=false;
     
     if ([_MDFMenuEffect intValue]==MDF_BLUR) {
         //Add blur effect to the icon bar
@@ -114,12 +121,14 @@
     [parrentViewSticky addSubview:myCollectionView];
 }
 
+
+//Set the frame to the correct position then build the menu
+
 -(BOOL)attachMenu:(UIView*)parrentView
 {
     parrentViewSticky=parrentView;
     mainViewPosition=parrentView.frame;
     parrentView.userInteractionEnabled=YES;
-    
     menuPixelWidth=parrentView.frame.size.width*[_MDFMenuSize floatValue];
     
     switch ([_MDFMenuAction integerValue]) {
@@ -164,24 +173,23 @@
     return true;
 }
 
+//Collection view callbacks.
+
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     return [_MDFMenuItems count];
 }
 
-
-// The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     
     UICollectionViewCell *cell=[collectionView dequeueReusableCellWithReuseIdentifier:@"cellIdentifier" forIndexPath:indexPath];
     
     NSArray *currentItem=[_MDFMenuItems objectAtIndex:indexPath.row];
-    
     NSString *filename=[currentItem objectAtIndex:0];
-    
     UIImageView *theIcon=[[UIImageView alloc] initWithImage:[UIImage imageNamed:filename]];
     theIcon.contentMode=UIViewContentModeScaleAspectFit;
+    
     if (_MDFMenuColorUsage)
     {
         if ([_MDFMenuEffect intValue]==MDF_BLUR)
@@ -220,7 +228,6 @@
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    
     return 0.0;
 }
 
@@ -257,6 +264,8 @@
     }
 }
 
+//Disable menu
+
 -(void) disableMenu
 {
     [self hideMenu];
@@ -264,6 +273,8 @@
     if (_adelegate)
         [_adelegate MDFCallback:[NSNumber numberWithInt:MDF_MENU_DISABLE] selectionIndex:nil];
 }
+
+//Enable menu
 
 -(void) enableMenu
 {
@@ -281,6 +292,8 @@
 {
     return (bool)nudgeFactorX | (bool)nudgeFactorY;
 }
+
+//Make the menu appear
 
 -(void) showMenu {
     
@@ -340,6 +353,8 @@
     menuStartedExpanded=true;
 }
 
+//Make the menu disappear
+
 -(void) hideMenu {
     
     nudgeFactorX=0;
@@ -359,7 +374,7 @@
     else
     {
         [UIView animateWithDuration:0.2f
-                              delay:0
+                              delay:0.2f
                             options: UIViewAnimationOptionCurveEaseInOut
                          animations:^{
                              myCollectionView.frame=menuPosition;
@@ -374,32 +389,27 @@
     menuStartedExpanded=false;
 }
 
+//What to do when someone touches the UIView
+
 - (void)panGesture:(UIPanGestureRecognizer *)sender {
     
-    if (!enableDisableFlag) {
+    if (!enableDisableFlag)
         return;
-    }
+    
     
     if (sender.state == UIGestureRecognizerStateBegan) {
         startLocation = [sender locationInView:nil];
-        
-        if (nudgeFactorX || nudgeFactorY) {
+        if (nudgeFactorX || nudgeFactorY)
             menuStartedExpanded=true;
-        }
         else
-        {
             menuStartedExpanded=false;
-        }
+        
     }
     else if (sender.state == UIGestureRecognizerStateEnded) {
         if (menuShouldStay)
-        {
             [self showMenu];
-        }
         else
-        {
             [self hideMenu];
-        }
     }
     else {
         CGPoint stopLocation = [sender locationInView:nil];
@@ -408,14 +418,10 @@
         
         CGRect newPosition;
         
-        if (_MDFMenuAnimate) {
-            
+        if (_MDFMenuAnimate)
             newPosition=mainViewPosition;
-        }
         else
-        {
             newPosition=menuPosition;
-        }
         
         swipeDistanceX+=nudgeFactorX;
         swipeDistanceY+=nudgeFactorY;
@@ -507,24 +513,16 @@
         else
         {
             if (fabs(refPosition.origin.y-newPosition.origin.y) > menuPixelWidth/4 || fabs(refPosition.origin.x-newPosition.origin.x) > menuPixelWidth/4)
-            {
                 menuShouldStay=true;
-            }
             else
-            {
                 menuShouldStay=false;
-            }
         }
         
-        if (_MDFMenuAnimate) {
+        if (_MDFMenuAnimate)
             parrentViewSticky.frame=newPosition; //newPosition is always initialized
-        }
         else
-        {
             myCollectionView.frame=newPosition; //newPosition is always initialized
-        }
     }
-    
 }
 
 @end

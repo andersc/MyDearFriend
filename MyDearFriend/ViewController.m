@@ -14,28 +14,59 @@
 
 @implementation ViewController
 {
-    MDFMenu *myMenu;
+    MDFMenu *myMenu;        //The menu
     
     UIImageView *myImage;
     UIButton *buttonDisableEnable;
     UIButton *buttonShowHide;
-    bool     isMenuVisible;
 }
+
+// Configure the monu
 
 -(void) populateSettings
 {
-    myMenu.MDFMenuAction=[NSNumber numberWithInt:MDF_MENU_LOCATION_RIGHT];
+    
+    //MDFMenuAction dictates the position of the menu
+    //Possible locations: left,right,up,down
+    
+    myMenu.MDFMenuAction=[NSNumber numberWithInt:MDF_MENU_LOCATION_LEFT];
+    
+    //Animate parrent view (YES / NO)
+    
     myMenu.MDFMenuAnimate=MDF_ANIMATE_PARENT_NO;
+    
+    //Blur the meny (MDF_BLUR), Alpha the meny (MDF_ALPHA) or no efect (MDF_PLAIN)
+    
     myMenu.MDFMenuEffect=[NSNumber numberWithInt:MDF_BLUR];
+    
+    //Attach a touch recognizer YES/NO
+    
     myMenu.MDFMenuUseTouch=MDF_TOUCH_YES;
+    
+    //Hide menu efter selection YES/NO
+    
     myMenu.MDFMenuHideAfterAction=MDF_HIDE_AFTER_ACTION_YES;
+    
+    //Size of the menu and menu items within (parts of parrent width),
+    
     myMenu.MDFMenuSize=[NSNumber numberWithFloat:0.2f];
+    
+    //Menu color
+    
     myMenu.MDFMenuColor=[UIColor clearColor];
+    
+    //Use the menu item color YES/NO
+    
     myMenu.MDFMenuColorUsage=MDF_USE_COLOR_NO;
     
+    //Init the menu items.
     myMenu.MDFMenuItems=[[NSMutableArray alloc] init];
+    
+    //Each menu item consists of 1. The icon picture, 2. a color (if used) else it can be nil, 3. Action number/tag
     NSArray *menuItem=@[@"book.png", [UIColor blueColor], [NSNumber numberWithInteger:BOOK_ACTION]];
     [myMenu.MDFMenuItems addObject:menuItem];
+    
+    
     menuItem=@[@"clock.png", [UIColor yellowColor], [NSNumber numberWithInteger:CLOCK_ACTION]];
     [myMenu.MDFMenuItems addObject:menuItem];
     menuItem=@[@"crown.png", [UIColor greenColor], [NSNumber numberWithInteger:CROWN_ACTION]];
@@ -89,19 +120,16 @@
     [self attatchButtons];
     
     // This is the MDF part
-    myMenu=[[MDFMenu alloc] init:self];                         //Create a menu object and delegate callback to self.
+    myMenu=[[MDFMenu alloc] init:self];     //Create a menu object and delegate callback to self.
     [self populateSettings];                //Populate a NSArray with settings
     if (![myMenu attachMenu:self.view])     //Attach the menu to a UIView with the settings provided
         NSLog(@"Failed ataching menu");
     //End of the MDF part
     
-    UIInterfaceOrientationMask k=[self supportedInterfaceOrientations];
-    NSLog(@"The maske says: %ld",k);
 }
 
 -(void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    NSLog(@"will rotate");
     [myMenu hideMenu];
     [myMenu visualHideMenu];
     buttonDisableEnable.hidden=true;
@@ -140,6 +168,8 @@
     // Dispose of any resources that can be recreated.
 }
 
+
+//MDF Callbacks --- Start
 
 -(void)doAction:(NSNumber*)selectionIndex
 {
@@ -198,5 +228,8 @@
 {
     NSLog(@"MDF error: %@",MDFErrorString);
 }
+
+
+//MDF Callbacks --- End
 
 @end
